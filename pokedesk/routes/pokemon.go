@@ -110,3 +110,30 @@ func DeletePokemon(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
+
+func GetAllPokemons(c *gin.Context) {
+	collection := db.GetPokemonsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var pokemons []models.Pokemon
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var pokemon models.Pokemon
+		cursor.Decode(&pokemon)
+		pokemons = append(pokemons, pokemon)
+	}
+
+	if err := cursor.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, pokemons)
+}

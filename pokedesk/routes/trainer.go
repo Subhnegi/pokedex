@@ -108,3 +108,30 @@ func DeleteTrainer(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
+
+func GetAllTrainers(c *gin.Context) {
+	collection := db.GetTrainersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var trainers []models.Trainer
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var trainer models.Trainer
+		cursor.Decode(&trainer)
+		trainers = append(trainers, trainer)
+	}
+
+	if err := cursor.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, trainers)
+}
