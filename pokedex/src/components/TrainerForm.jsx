@@ -6,17 +6,28 @@ const TrainerForm = () => {
     const [name, setName] = useState('');
     const [money, setMoney] = useState(0);
     const [badges, setBadges] = useState([]);
-
+    const [submiting, setSubmiting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmiting(true);
         const payload = { name, money, badges };
-        createTrainer(payload)
+        try {
+            await createTrainer(payload)
+            setSubmiting(false);
+            setSubmitted(true);
+            setTimeout(() => {
+                setSubmitted(false);
+            }, 5000);
+        } catch (error) {
+            alert("failed to create trainers")
+        }
     };
 
     return (
         <motion.form
             onSubmit={handleSubmit}
-            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-10 mb-4"
+            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-10 mb-4 mx-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -59,13 +70,23 @@ const TrainerForm = () => {
                 />
             </div>
             <div className="flex items-center justify-between">
+                {submiting ? 
+                    <button
+                    className="bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled
+                >
+                    Submitting...
+                </button>
+                : 
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                 >
                     Submit
                 </button>
+                }
             </div>
+                {submitted && <p className="text-green-500 text-center font-bold">Trainer created successfully!</p>}
         </motion.form>
     );
 };

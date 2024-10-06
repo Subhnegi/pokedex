@@ -2,15 +2,15 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getTrainers, createTrainer, updateTrainer, deleteTrainer } from '../api/api';
-import TrainerForm from '../components/TrainerForm';
 import EditModal from '../components/EditModal';
+import TrainerCard from '../components/TrainerCard';
 const Trainers = () => {
     const [trainers, setTrainers] = useState([]);
     const [selectedTrainer, setSelectedTrainer] = useState(null);
     const [showModal, setShowModal] = useState(false);
     useEffect(() => {
         fetchTrainers();
-    }, [trainers]);
+    }, []);
 
     const fetchTrainers = async () => {
         const data = await getTrainers();
@@ -30,7 +30,7 @@ const Trainers = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-4">Trainers</h1>
+            <h1 className='text-4xl font-bold text-center p-4 text-gray-800'>Trainers</h1>
             <motion.div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                 initial={{ opacity: 0 }}
@@ -38,30 +38,14 @@ const Trainers = () => {
                 exit={{ opacity: 0 }}
             >
                 {trainers.map((trainer) => (
-                    <motion.div
+                    <TrainerCard
                         key={trainer.ID}
-                        className="bg-white shadow-md rounded p-4"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <h2 className="text-xl font-bold">{trainer.Name}</h2>
-                        <p>Money: {trainer.Money}</p>
-                        <p>Badges: {trainer.Badges.join(', ')}</p>
-                        <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 mr-2"
-                            onClick={() => handleEdit(trainer)}
-                        >
-                            Edit
-                        </button>
-                        <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2"
-                            onClick={() => handleDelete(trainer.ID)}
-                        >
-                            Delete
-                        </button>
-                    </motion.div>
+                        trainer={trainer}
+                        handleEdit={() => handleEdit(trainer)}
+                        handleDelete={() => handleDelete(trainer.ID)}
+                    />
                 ))}
             </motion.div>
-            <TrainerForm />
             <EditModal
                 show={showModal}
                 onHide={() => setShowModal(false)}

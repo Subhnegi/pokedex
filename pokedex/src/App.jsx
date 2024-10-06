@@ -4,6 +4,9 @@ import Navbar from './components/Navbar';
 import Trainers from './pages/Trainers';
 import Pokemons from './pages/Pokemons';
 import Home from './pages/Home';
+import CreatePokemon from './pages/CreatePokemon';
+import CreateTrainer from './pages/CreateTrainer';
+
 function App() {
   return (
     <Router>
@@ -13,6 +16,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/trainers" element={<Trainers />} />
           <Route path="/pokemons" element={<Pokemons />} />
+          <Route path="/create-pokemon" element={<CreatePokemon />} />
+          <Route path="/create-trainer" element={<CreateTrainer />} />
         </Routes>
       </div>
     </Router>

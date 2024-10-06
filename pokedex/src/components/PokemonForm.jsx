@@ -8,18 +8,28 @@ const PokemonForm = ({ pokemon, onSubmit }) => {
     const [hp, setHp] = useState(0);
     const [moves, setMoves] = useState([]);
     const [types, setTypes] = useState([]);
-
+    const [submiting, setSubmiting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = { name, level, hp, moves, types };
-        await createPokemon(payload);
+        try {
+            await createPokemon(payload);
+            setSubmiting(false);
+            setSubmitted(true);
+            setTimeout(() => {
+                setSubmitted(false);
+            }, 5000);
+        } catch (error) {
+            alert("failed to create pokemons")
+        }
     };
 
     return (
         <motion.form
             onSubmit={handleSubmit}
-            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-10"
+            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-10 mx-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -86,13 +96,23 @@ const PokemonForm = ({ pokemon, onSubmit }) => {
                 />
             </div>
             <div className="flex items-center justify-between">
+                {submiting ? 
+                    <button
+                    className="bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled
+                >
+                    Submitting...
+                </button>
+                : 
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                 >
                     Submit
                 </button>
+                }
             </div>
+                {submitted && <p className="text-green-500 text-center font-bold">Pokemon created successfully!</p>}
         </motion.form>
     );
 };
